@@ -3,6 +3,16 @@ const apikey = "85d706a9414f431c9f19c67fcaf02b7c";
 
 let blogContainer = document.getElementById("blog-container");
 
+// Helper function to limit the number of words in a text
+function limitWords(text, wordLimit) {
+    const words = text.split(" ");  // Split the text by spaces into an array of words
+    if (words.length > wordLimit) {
+        return words.slice(0, wordLimit).join(" ") + "...";  // Limit the words and add "..."
+    }
+    return text;  // Return the original text if it's within the word limit
+}
+
+// Fetch news articles from the API
 async function fetchRandomApi() {
     try {
         const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&pageSize=12&apikey=${apikey}`;
@@ -18,9 +28,10 @@ async function fetchRandomApi() {
     }
 }
 
+// Display the articles on the page
 function displayBlock(articles) {
     blogContainer.innerHTML = "";  // Clear previous content
-    articles.forEach(article => {  // Corrected: use articles.forEach
+    articles.forEach(article => {
         const blogCard = document.createElement("div");
         blogCard.classList.add("blog-card");
 
@@ -29,10 +40,10 @@ function displayBlock(articles) {
         img.alt = article.title;
 
         const title = document.createElement("h2");
-        title.textContent = article.title;
+        title.textContent = limitWords(article.title, 5);  // Limit title to 10 words
 
         const description = document.createElement("p");
-        description.textContent = article.description;
+        description.textContent = limitWords(article.description, 10);  // Limit description to 30 words
 
         blogCard.appendChild(img);
         blogCard.appendChild(title);
@@ -41,6 +52,7 @@ function displayBlock(articles) {
     });
 }
 
+// IIFE to fetch and display the articles
 (async () => {
     try {
         const articles = await fetchRandomApi();
